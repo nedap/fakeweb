@@ -8,7 +8,7 @@ class TestFakeWebOpenURI < Test::Unit::TestCase
 
   def test_content_for_registered_uri
     FakeWeb.register_uri('http://mock/test_example.txt', :file => File.dirname(__FILE__) + '/fixtures/test_example.txt')
-    assert_equal 'test example content', FakeWeb.response_for('http://mock/test_example.txt').body
+    assert_equal 'test example content', FakeWeb.response_for(nil, 'http://mock/test_example.txt').body
   end
   
   def test_mock_open

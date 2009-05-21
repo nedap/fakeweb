@@ -1,22 +1,29 @@
 module FakeWeb
   class Responder #:nodoc:
 
-    attr_accessor :method, :uri, :options, :times
+    attr_accessor :method, :uri, :options, :times, :response_block
 
-    def initialize(method, uri, options, times)
+    def initialize(method, uri, options, times, &block)
       self.method = method
       self.uri = uri
       self.options = options
       self.times = times ? times : 1
+      self.response_block = block
     end
 
-    def response(&block)
+    def response(request, &block)
       if has_baked_response?
         response = baked_response
       else
-        code, msg = meta_information
-        response = Net::HTTPResponse.send(:response_class, code.to_s).new(uri, code.to_s, msg)
-        response.instance_variable_set(:@body, content)
+        if self.response_block
+          code, msg = meta_information
+          response = Net::HTTPResponse.send(:response_class, code.to_s).new(uri, code.to_s, msg)
+          response.instance_variable_set(:@body, self.response_block.call(params_for(request)))
+        else
+          code, msg = meta_information
+          response = Net::HTTPResponse.send(:response_class, code.to_s).new(uri, code.to_s, msg)
+          response.instance_variable_set(:@body, content)
+        end
       end
 
       response.instance_variable_set(:@read, true)
@@ -95,5 +102,18 @@ module FakeWeb
       options.has_key?(:status) ? options[:status] : [200, 'OK']
     end
 
+    def params_for(request)
+      case request.method
+      when 'GET'
+        query = URI.parse(request.path).query
+        if query
+          query.split('&').inject({}) {|hsh, p| k, v = p.split('='); hsh[k] = v; hsh}
+        else
+          {}
+        end
+      else
+        request.body.split('&').inject({}) {|hsh, p| k, v = p.split('='); hsh[k] = v; hsh}
+      end
+    end
   end
 end

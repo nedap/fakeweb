@@ -105,15 +105,16 @@ module FakeWeb
   #   specified URL is requested. Any +Exception+ class is valid. Example:
   #     FakeWeb.register_uri('http://www.example.com/', :exception => Net::HTTPError)
   #
-  def self.register_uri(*args)
+  def self.register_uri(*args, &block)
     method = :any
     case args.length
     when 3 then method, uri, options = *args
     when 2 then         uri, options = *args
-    else   raise ArgumentError.new("wrong number of arguments (#{args.length} for method = :any, uri, options)")
+    when 1 then         uri = *args; options = {}
+    else raise ArgumentError.new("wrong number of arguments (#{args.length} for method = :any, uri, options)")
     end
 
-    Registry.instance.register_uri(method, uri, options)
+    Registry.instance.register_uri(method, uri, options, &block)
   end
 
   # call-seq:
@@ -121,15 +122,16 @@ module FakeWeb
   #   FakeWeb.response_for(uri)
   #
   # Returns the faked Net::HTTPResponse object associated with +uri+.
-  def self.response_for(*args, &block) #:nodoc: :yields: response
+  def self.response_for(request, *args, &block) #:nodoc: :yields: response
     method = :any
     case args.length
     when 2 then method, uri = args
     when 1 then         uri = args.first
+      # Get the request here? STODO
     else   raise ArgumentError.new("wrong number of arguments (#{args.length} for method = :any, uri)")
     end
 
-    Registry.instance.response_for(method, uri, &block)
+    Registry.instance.response_for(request, method, uri, &block)
   end
 
   # call-seq:

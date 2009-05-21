@@ -14,9 +14,9 @@ module FakeWeb
       end
     end
 
-    def register_uri(method, uri, options)
+    def register_uri(method, uri, options, &block)
       uri_map[normalize_uri(uri)][method] = [*[options]].flatten.collect do |option|
-        FakeWeb::Responder.new(method, uri, option, option[:times])
+        FakeWeb::Responder.new(method, uri, option, option[:times], &block)
       end
     end
 
@@ -37,7 +37,7 @@ module FakeWeb
       end
     end
 
-    def response_for(method, uri, &block)
+    def response_for(request, method, uri, &block)
       responses = registered_uri(method, uri)
       return nil if responses.nil?
 
@@ -50,7 +50,7 @@ module FakeWeb
         end
       end
 
-      next_response.response(&block)
+      next_response.response(request, &block)
     end
 
     private
