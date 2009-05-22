@@ -126,7 +126,6 @@ module FakeWeb
     case args.length
     when 2 then method, uri = args
     when 1 then         uri = args.first
-      # Get the request here? STODO
     else   raise ArgumentError.new("wrong number of arguments (#{args.length} for method = :any, uri)")
     end
 
