@@ -110,7 +110,6 @@ module FakeWeb
     case args.length
     when 3 then method, uri, options = *args
     when 2 then         uri, options = *args
-    when 1 then         uri = *args; options = {}
     else raise ArgumentError.new("wrong number of arguments (#{args.length} for method = :any, uri, options)")
     end
 

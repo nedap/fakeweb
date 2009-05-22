@@ -13,7 +13,7 @@ class TestFakeWeb < Test::Unit::TestCase
   end
 
   def test_register_uri_with_block
-    FakeWeb.register_uri('http://mock/test_example.txt') { 'foo' }
+    FakeWeb.register_uri('http://mock/test_example.txt', {}) { 'foo' }
     assert FakeWeb.registered_uri?('http://mock/test_example.txt')
   end
   
@@ -139,7 +139,7 @@ class TestFakeWeb < Test::Unit::TestCase
   end
 
   def test_content_for_registered_uri_with_block
-    FakeWeb.register_uri('http://example.com:3000/') { |params| 'test example content' }
+    FakeWeb.register_uri('http://example.com:3000/', {}) { |params| 'test example content' }
 
     Net::HTTP.start('example.com', 3000) do |http|
       response = http.get('/')
