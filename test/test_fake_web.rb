@@ -19,7 +19,7 @@ class TestFakeWeb < Test::Unit::TestCase
   
   def test_register_uri_with_wrong_number_of_arguments
     assert_raises ArgumentError do
-      FakeWeb.register_uri("http://example.com", 1, 2, 3)
+      FakeWeb.register_uri("http://example.com")
     end
     assert_raises ArgumentError do
       FakeWeb.register_uri(:get, "http://example.com", "/example", :string => "example")
@@ -230,6 +230,40 @@ class TestFakeWeb < Test::Unit::TestCase
     end
   end
 
+  def test_params_for_registered_uri_with_block_using_get
+    FakeWeb.register_uri(:get, 'http://example.com/?foo=bar', {}) do |params|
+      assert_equal({'foo' => 'bar'}, params)
+      ''
+    end
+    
+    Net::HTTP.start('example.com') do |http|
+      response = http.get('/?foo=bar')
+    end
+  end
+  
+  def test_params_for_registered_uri_with_block_using_post
+    FakeWeb.register_uri(:post, 'http://example.com/', {}) do |params|
+      assert_equal({'foo' => 'bar'}, params)
+      ''
+    end
+    
+    Net::HTTP.post_form(URI.parse('http://example.com/'), {'foo' => 'bar'})
+  end
+  
+  def test_params_for_registered_uri_with_block_using_put
+    FakeWeb.register_uri(:put, 'http://example.com/', {}) do |params|
+      assert_equal({'foo' => 'bar'}, params)
+      ''
+    end
+    
+    uri = URI.parse("http://example.com/")
+    Net::HTTP.start(uri.host, uri.port) do |http|
+      headers = {'Content-Type' => 'text/plain; charset=utf-8'}
+      put_data = "foo=bar"
+      response = http.send_request('PUT', uri.request_uri, put_data, headers)
+    end
+  end
+  
   def test_mock_request_with_block
     FakeWeb.register_uri('http://mock/test_example.txt', :file => File.dirname(__FILE__) + '/fixtures/test_example.txt')
     Net::HTTP.start('mock') do |http|
