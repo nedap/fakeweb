@@ -112,7 +112,11 @@ module FakeWeb
           {}
         end
       else
-        request.body.split('&').inject({}) {|hsh, p| k, v = p.split('='); hsh[k] = v; hsh}
+        if request.body
+          request.body.split('&').inject({}) {|hsh, p| k, v = p.split('='); hsh[k] = v; hsh}
+        else
+          {}
+        end
       end
     end
   end
