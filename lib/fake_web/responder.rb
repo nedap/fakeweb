@@ -103,20 +103,19 @@ module FakeWeb
     end
 
     def params_for(request)
-      case request.method
-      when 'GET'
+      if request.method == 'GET'
         query = URI.parse(request.path).query
-        if query
-          query.split('&').inject({}) {|hsh, p| k, v = p.split('='); hsh[k] = v; hsh}
-        else
-          {}
-        end
+        decode_params(query)
       else
-        if request.body
-          request.body.split('&').inject({}) {|hsh, p| k, v = p.split('='); hsh[k] = v; hsh}
-        else
-          {}
-        end
+        decode_params(request.body)
+      end
+    end
+
+    def decode_params(encoded_params)
+      if encoded_params
+        encoded_params.split('&').inject({}) {|hsh, p| k, v = p.split('='); hsh[k] = v; hsh}
+      else
+        {}
       end
     end
   end
