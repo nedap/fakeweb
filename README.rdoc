@@ -91,6 +91,20 @@ option for that response.)
     req.delete("/posts/1").body  # => "Post not found"
   end
 
+=== Using a block to generate a response
+
+You can optionally call FakeWeb.register_uri with a block which will be used to
+generate the response.  The block will receive a hash containing the query parameters.
+The return value of the block will be the response body.
+
+  FakeWeb.register_uri(:post, "http://example.com/", {}) do |params|
+    # => params will be {'foo' => 'bar'}
+    "Hello"
+  end
+  
+  resp = Net::HTTP.post_form(URI.parse('http://example.com/'), {'foo' => 'bar'})
+  resp.body # => "Hello"
+
 === Using HTTP basic authentication
 
 You can stub requests that use basic authentication with +userinfo+ strings in
