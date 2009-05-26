@@ -113,7 +113,7 @@ module FakeWeb
 
     def decode_params(encoded_params)
       if encoded_params
-        encoded_params.split('&').inject({}) {|hsh, p| k, v = p.split('='); hsh[k] = v; hsh}
+        UrlEncodedPairParser.new(URI.decode(encoded_params).split('&').map {|v| v.split('=')}).result
       else
         {}
       end
