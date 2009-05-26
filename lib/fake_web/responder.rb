@@ -21,7 +21,7 @@ module FakeWeb
           response.instance_variable_set(:@body, self.response_block.call(params_for(request)))
         else
           code, msg = meta_information
-          response = Net::HTTPResponse.send(:response_class, code.to_s).new(uri, code.to_s, msg)
+          response = Net::HTTPResponse.send(:response_class, code.to_s).new("1.0", code.to_s, msg)
           response.instance_variable_set(:@body, content)
         end
       end
