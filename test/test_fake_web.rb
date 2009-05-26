@@ -278,6 +278,14 @@ class TestFakeWeb < Test::Unit::TestCase
     
     Net::HTTP.post_form(URI.parse('http://example.com/'), {})
   end
+
+  def test_param_decoding
+    FakeWeb.register_uri(:post, 'http://example.com/', {}) do |params|
+      assert_equal({'user' => {'name' => 'foo'}}, params)
+    end
+    
+    Net::HTTP.post_form(URI.parse('http://example.com/'), {'user[name]' => 'foo'})
+  end
   
   def test_params_for_registered_uri_with_block_using_put_without_params
     FakeWeb.register_uri(:put, 'http://example.com/', {}) do |params|
