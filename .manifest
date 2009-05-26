@@ -11,6 +11,7 @@ lib/fake_web/registry.rb
 lib/fake_web/responder.rb
 lib/fake_web/response.rb
 lib/fake_web/stub_socket.rb
+lib/fake_web/url_encoded_pair_parser.rb
 lib/fakeweb.rb
 test
 test/fixtures
@@ -24,5 +25,6 @@ test/test_fake_authentication.rb
 test/test_fake_web.rb
 test/test_fake_web_open_uri.rb
 test/test_helper.rb
+test/test_missing_open_uri.rb
 test/test_query_string.rb
 test/test_trailing_slashes.rb
