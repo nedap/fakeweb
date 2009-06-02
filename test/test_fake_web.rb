@@ -266,8 +266,9 @@ class TestFakeWeb < Test::Unit::TestCase
       assert_equal({'foo' => 'bar'}, params)
       ''
     end
-    
-    Net::HTTP.post_form(URI.parse('http://example.com/'), {'foo' => 'bar'})
+
+    http = Net::HTTP.new("example.com", 80)
+    http.post("/", "foo=bar", {})
   end
 
   def test_params_for_registered_uri_with_block_using_post_without_params
