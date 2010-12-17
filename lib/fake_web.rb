@@ -64,18 +64,18 @@ module FakeWeb
   #   Takes a valid filesystem path to a file that is slurped and returned as
   #   the body of the response.
   #     FakeWeb.register_uri(:post, 'http://example.com/', :file => "/tmp/my_response_body.txt")
-  # <tt>:response</tt>:: 
+  # <tt>:response</tt>::
   #   Either an <tt>Net::HTTPResponse</tt>, an +IO+ or a +String+.
-  # 
+  #
   #   The easier way by far is to pass the <tt>:response</tt> option to
   #   +register_uri+ as a +String+ or an (open for reads) +IO+ object which
   #   will be used as the complete HTTP response, including headers and body.
   #   If the string points to a readable file, this file will be used as the
   #   content for the request.
-  # 
+  #
   #   To obtain a complete response document, you can use the +curl+ command,
   #   like so:
-  #  
+  #
   #     curl -i http://www.example.com/ > response_for_www.example.com
   #
   #   which can then be used in your test environment like so:
@@ -85,7 +85,7 @@ module FakeWeb
   #   See the <tt>Net::HTTPResponse</tt>
   #   documentation[http://ruby-doc.org/stdlib/libdoc/net/http/rdoc/classes/Net/HTTPResponse.html]
   #   for more information on creating custom response objects.
-  # 
+  #
   # +options+ may also be an +Array+ containing a list of the above-described +Hash+.
   # In this case, FakeWeb will rotate through each provided response, you may optionally
   # provide:
@@ -93,7 +93,7 @@ module FakeWeb
   # <tt>:times</tt>::
   #   The number of times this response will be used. Decremented by one each time it's called.
   #   FakeWeb will use the final provided request indefinitely, regardless of its :times parameter.
-  # 
+  #
   # Two optional arguments are also accepted:
   #
   # <tt>:status</tt>::
@@ -149,6 +149,15 @@ module FakeWeb
     end
 
     Registry.instance.registered_uri?(method, uri)
+  end
+
+  # Returns the request object from the last request made via Net::HTTP.
+  def self.last_request
+    @last_request
+  end
+
+  def self.last_request=(request)
+    @last_request = request
   end
 
 end

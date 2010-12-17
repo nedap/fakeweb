@@ -35,6 +35,7 @@ module Net  #:nodoc: all
 
     alias request_without_fakeweb request
     def request(request, body = nil, &block)
+      FakeWeb.last_request = request
       protocol = use_ssl? ? "https" : "http"
 
       path = request.path
